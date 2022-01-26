@@ -133,6 +133,29 @@ const getData = async () => {
     }
 };
 
+const allowCrossDomain = (req, res, next) => {
+    const whitelist = ['http://localhost:3000'];
+    const origin = req.headers.origin;
+    if (whitelist.indexOf(origin) > -1) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('X-FRAME-OPTIONS', 'ALLOW-FROM ' + origin);
+    }
+
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, Content-Length, X-Requested-With, accesstoken, latitude, longitude, source'
+    );
+
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+};
+
 export {
     scrapData,
     fetchStateWiseData,
@@ -140,4 +163,5 @@ export {
     writeData,
     isDataStaled,
     getData,
+    allowCrossDomain,
 };
