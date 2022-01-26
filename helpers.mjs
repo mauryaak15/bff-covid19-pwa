@@ -108,9 +108,24 @@ const getData = async () => {
     if (!lastUpdatedDate || isDataStaled(lastUpdatedDate)) {
         const scrappedData = await scrapData();
         const stateData = await fetchStateWiseData();
-        const summaryPerc = calcluateSummaryChangePer(
-            stateData[stateData.length - 1]
-        );
+        const total = stateData[stateData.length - 1];
+        scrappedData?.summary.forEach((summaryBlockInfo) => {
+            switch (summaryBlockInfo.type) {
+                case 'active':
+                    summaryBlockInfo.changeFlow =
+                        total.active > total.new_active ? 'down' : 'up';
+                    break;
+                case 'discharged':
+                    summaryBlockInfo.changeFlow =
+                        total.cured > total.new_cured ? 'down' : 'up';
+                    break;
+                case 'deaths':
+                    summaryBlockInfo.changeFlow =
+                        total.death > total.new_death ? 'down' : 'up';
+                    break;
+            }
+        });
+        const summaryPerc = calcluateSummaryChangePer(total);
         scrappedData.summary.forEach((caseTypeData) => {
             switch (caseTypeData.type) {
                 case 'active':
