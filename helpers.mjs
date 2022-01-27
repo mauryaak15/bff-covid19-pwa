@@ -139,7 +139,10 @@ const getData = async () => {
 };
 
 const allowCrossDomain = (req, res, next) => {
-    const whitelist = ['http://localhost:3000'];
+    const whitelist = [
+        'http://localhost:3000',
+        'https://covid19-track-pwa.netlify.app',
+    ];
     const origin = req.headers.origin;
     if (whitelist.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);
